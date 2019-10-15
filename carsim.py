@@ -66,9 +66,10 @@ class Game:
         else:
             car.steer_angle = 0
         if pressed[pygame.K_UP]:
-            car.accel += 1
-        elif pressed[pygame.K_DOWN]:
             car.accel -= 1
+        elif pressed[pygame.K_DOWN]:
+            car.speed = 0
+            car.accel = 0
         elif pressed[pygame.K_SPACE]:
             if car.velocity.x != 0:
                 car.accel = copysign(car.max_accel, -car.velocity.x)
