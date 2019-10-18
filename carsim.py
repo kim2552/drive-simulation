@@ -70,7 +70,6 @@ class Game:
         else:
             car.accel = 0
         car.accel = max(-car.max_accel, min(car.accel, car.max_accel))
-        car.steer_angle = max(-car.max_steer, min(car.steer_angle, car.max_steer))
 
     ''' Draws the screen and objects '''
     def draw(self, car):

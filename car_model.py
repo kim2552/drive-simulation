@@ -1,10 +1,10 @@
 import pygame
 from pygame.math import Vector2
-from math import sin, cos, tan, radians, degrees, copysign
+from math import sin, cos, tan, radians, degrees, copysign, pi
 
 
 class Car:
-    def __init__(self, x, y, angle=90.0, length = 30, max_steer=60, max_accel=5.0):
+    def __init__(self, x, y, angle=90.0, length = 30, max_steer=0, max_speed=5, max_accel=5.0):
         self.position = Vector2(x,y)
         self.velocity = Vector2(0.0,0.0)
         self.accel = 0.0
@@ -17,10 +17,12 @@ class Car:
         # Thresholds for input
         self.max_accel = max_accel
         self.max_steer = max_steer
+        self.max_speed = max_speed
 
     ''' Update the vehicle information '''
     def update(self, dt):
-        self.speed += self.accel
+        if(abs(self.speed) < self.max_speed):
+            self.speed += self.accel
         self.angle = self.steer_angle
 
         # Air resistance and friction
@@ -30,10 +32,17 @@ class Car:
             if(not(self.accel)):
                 self.speed = 0
 
-        self.position.x += self.speed
+        self.position.x += cos(self.angle*pi/180.0)*self.speed
+        self.position.y -= sin(self.angle*pi/180.0)*self.speed
 
         if(self.position.x > 640):
             self.position.x = 610
+        if(self.position.x < 0):
+            self.position.x = 10
+        if(self.position.y > 480):
+            self.position.y = 470
+        if(self.position.y < 0):
+            self.position.y = 10
 
         # Print Characteristics
         print("SPEED="+str(self.speed))
