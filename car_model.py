@@ -35,15 +35,6 @@ class Car:
         self.position.x += cos(self.angle*pi/180.0)*self.speed
         self.position.y -= sin(self.angle*pi/180.0)*self.speed
 
-        if(self.position.x > 640):
-            self.position.x = 610
-        if(self.position.x < 0):
-            self.position.x = 10
-        if(self.position.y > 480):
-            self.position.y = 470
-        if(self.position.y < 0):
-            self.position.y = 10
-
         # Print Characteristics
         print("SPEED="+str(self.speed))
         print("STEERANGLE="+str(self.steer_angle))

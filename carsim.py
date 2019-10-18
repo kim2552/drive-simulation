@@ -48,6 +48,9 @@ class Game:
             # Logic
             car.update(dt)
 
+            # Enfore map boundaries on the car
+            self.enforceBoundaries(car)
+
             # Drawing
             self.draw(car)
 
@@ -70,6 +73,16 @@ class Game:
         else:
             car.accel = 0
         car.accel = max(-car.max_accel, min(car.accel, car.max_accel))
+
+    def enforceBoundaries(self, car):
+        if(car.position.x > 640):
+            car.position.x = 610
+        if(car.position.x < 0):
+            car.position.x = 10
+        if(car.position.y > 480):
+            car.position.y = 470
+        if(car.position.y < 0):
+            car.position.y = 10
 
     ''' Draws the screen and objects '''
     def draw(self, car):
