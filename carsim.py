@@ -60,15 +60,13 @@ class Game:
     ''' defines the controls of the car '''
     def controls(self, car, dt, pressed):
         if pressed[pygame.K_LEFT]:
-            car.steer_angle -= 1
-        elif pressed[pygame.K_RIGHT]:
             car.steer_angle += 1
-        else:
-            car.steer_angle = 0
+        elif pressed[pygame.K_RIGHT]:
+            car.steer_angle -= 1
         if pressed[pygame.K_UP]:
-            car.accel += 1
+            car.accel += 0.1
         elif pressed[pygame.K_DOWN]:
-            car.accel -= 1
+            car.accel -= 0.1
         else:
             car.accel = 0
         car.accel = max(-car.max_accel, min(car.accel, car.max_accel))
@@ -77,7 +75,7 @@ class Game:
     ''' Draws the screen and objects '''
     def draw(self, car):
         self.screen.fill((0,0,0))
-        self.car_image = pygame.transform.scale(car_image, (120,60))
+        self.car_image = pygame.transform.scale(car_image, (30,15))
         rotated = pygame.transform.rotate(self.car_image, car.angle)
         rect = rotated.get_rect()
         self.screen.blit(rotated, car.position - (rect.width / 2, rect.height / 2))
