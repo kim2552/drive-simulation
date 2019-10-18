@@ -66,17 +66,12 @@ class Game:
         else:
             car.steer_angle = 0
         if pressed[pygame.K_UP]:
-            car.accel -= 1
+            car.accel += 1
         elif pressed[pygame.K_DOWN]:
-            car.speed = 0
-            car.accel = 0
-        elif pressed[pygame.K_SPACE]:
-            if car.velocity.x != 0:
-                car.accel = copysign(car.max_accel, -car.velocity.x)
+            car.accel -= 1
         else:
-            car.acceleration = 0
+            car.accel = 0
         car.accel = max(-car.max_accel, min(car.accel, car.max_accel))
-        car.angle = car.angle % 360
         car.steer_angle = max(-car.max_steer, min(car.steer_angle, car.max_steer))
 
     ''' Draws the screen and objects '''
