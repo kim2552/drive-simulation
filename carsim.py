@@ -77,9 +77,9 @@ class Game:
     ''' defines the controls of the car '''
     def controls(self, car, dt, pressed):
         if pressed[pygame.K_LEFT]:
-            car.steer_angle += 1
+            car.steer_angle += 5
         elif pressed[pygame.K_RIGHT]:
-            car.steer_angle -= 1
+            car.steer_angle -= 5
         if pressed[pygame.K_UP]:
             car.accel += 0.1
         elif pressed[pygame.K_DOWN]:
@@ -99,13 +99,36 @@ class Game:
             car.position.y = 10
 
         for obs in obstacle_list:
-            if(self.intersect(car, obs)):
-                car.position = car.prev_pos
+            self.intersect(car, obs)
 
     def intersect(self, car, obs):
-        if(car.position.x >= obs.position.x and car.position.x <= obs.position.x+obs.width):
-            if(car.position.y >= obs.position.y and car.position.y <= obs.position.y+obs.height):
-                return True
+        car_width = car.position.x-car.width
+        car_height = car.position.x-car.height
+        obs_width = obs.position.x-obs.width
+        obs_height = obs.position.y-obs.height
+        print(car.position.x)
+        print(obs.position.x)
+        print(obs_width)
+        if(car.position.x <= obs.position.x and car.position.x >= obs_width and car.position.y <= obs.position.y and car.position.y >= obs_height):
+            print("HI 1")
+            if(abs(car.position.x-obs.position.x) < abs(car.position.x-obs_width)):
+                car.position.x = obs.position.x
+            else:
+                car.position.x = obs_width
+            if(abs(car.position.y-obs.position.y) < abs(car.position.y-obs_width)):
+                car.position.y = obs.position.y
+            else:
+                car.position.y = obs_width
+        if(car_width <= obs.position.x and car_width >= obs_width and car_height <= obs.position.y and car_height >= obs_height):
+            print("HI 2")
+            if(abs(car_width-obs.position.x) > abs(car_width-obs_width)):
+                car.position.x = obs.position.x
+            else:
+                car.position.x = obs_width
+            if(abs(car_height-obs.position.y) > abs(car_height-obs_width)):
+                car.position.y = obs.position.y
+            else:
+                car.position.y = obs_width
 
     ''' Draws the screen and objects '''
     def draw(self, car):

@@ -38,8 +38,8 @@ class Obstacle:
         self.position.y -= sin(self.angle*pi/180.0)*self.speed
 
         # Print Characteristics
-        print("SPEED="+str(self.speed))
-        print("ANGLE="+str(self.angle))
-        print("VEL="+str(self.velocity))
-        print("POS="+str(self.position))
-        print("ACCEL="+str(self.accel))
+#        print("SPEED="+str(self.speed))
+#        print("ANGLE="+str(self.angle))
+#        print("VEL="+str(self.velocity))
+#        print("POS="+str(self.position))
+#        print("ACCEL="+str(self.accel))
