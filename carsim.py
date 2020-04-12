@@ -90,13 +90,17 @@ class Game:
 
     def enforceBoundaries(self, car, obstacle_list):
         if(car.position.x > 640):
-            car.position.x = 610
-        if(car.position.x < 0):
+            car.position.x = 640
+            car.speed = 0
+        if(car.position.x < 10):
             car.position.x = 10
-        if(car.position.y > 480):
+            car.speed = 0
+        if(car.position.y > 470):
             car.position.y = 470
-        if(car.position.y < 0):
+            car.speed = 0
+        if(car.position.y < 10):
             car.position.y = 10
+            car.speed = 0
 
         for obs in obstacle_list:
             self.intersect(car, obs)
