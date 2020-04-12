@@ -110,11 +110,11 @@ class Game:
         car_height = car.position.x-car.height
         obs_width = obs.position.x-obs.width
         obs_height = obs.position.y-obs.height
-        print(car.position.x)
-        print(obs.position.x)
-        print(obs_width)
+#        print(car.position.x)
+#        print(obs.position.x)
+#        print(obs_width)
         if(car.position.x <= obs.position.x and car.position.x >= obs_width and car.position.y <= obs.position.y and car.position.y >= obs_height):
-            print("HI 1")
+            #print("HI 1")
             if(abs(car.position.x-obs.position.x) < abs(car.position.x-obs_width)):
                 car.position.x = obs.position.x
             else:
@@ -124,7 +124,7 @@ class Game:
             else:
                 car.position.y = obs_width
         if(car_width <= obs.position.x and car_width >= obs_width and car_height <= obs.position.y and car_height >= obs_height):
-            print("HI 2")
+            #print("HI 2")
             if(abs(car_width-obs.position.x) > abs(car_width-obs_width)):
                 car.position.x = obs.position.x
             else:
