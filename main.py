@@ -43,32 +43,27 @@ class Game:
     """ TODO::Refine Controls for 2 wheel steering """
     def controls(self, car, dt, pressed):
         if pressed[pygame.K_LEFT]:
-            car.steer_angle += 5
+            car.setSteerAngle(5)
         elif pressed[pygame.K_RIGHT]:
-            car.steer_angle -= 5
+            car.setSteerAngle(5)
         if pressed[pygame.K_UP]:
-            car.accel += 0.1
+            car.setForce(5000)
         elif pressed[pygame.K_DOWN]:
-            car.accel -= 0.1
+            car.setForce(-5000)
         else:
-            car.accel = 0
-        car.accel = max(-car.max_accel, min(car.accel, car.max_accel))
+            car.setForce(0)
 
     """ enforces collision with object and boundaries """
     """ TODO::Create Walls for the car to collide with """
     def enforceBoundaries(self, car):
         if(car.position.x > 640):
-            car.position.x = 640
-            car.speed = 0
+            car.SetForce(0)
         if(car.position.x < 10):
-            car.position.x = 10
-            car.speed = 0
+            car.setForce(0)
         if(car.position.y > 470):
-            car.position.y = 470
-            car.speed = 0
+            car.setForce(0)
         if(car.position.y < 10):
-            car.position.y = 10
-            car.speed = 0
+            car.setForce(0)
 
     """ draws the screen and objects """
     def draw(self, car):
