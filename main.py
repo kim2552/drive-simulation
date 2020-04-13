@@ -47,9 +47,9 @@ class Game:
         elif pressed[pygame.K_RIGHT]:
             car.setSteerAngle(5)
         if pressed[pygame.K_UP]:
-            car.setForce(5000)
+            car.setForce(100000)
         elif pressed[pygame.K_DOWN]:
-            car.setForce(-5000)
+            car.setForce(-100000)
         else:
             car.setForce(0)
 
@@ -57,7 +57,7 @@ class Game:
     """ TODO::Create Walls for the car to collide with """
     def enforceBoundaries(self, car):
         if(car.position.x > 640):
-            car.SetForce(0)
+            car.setReaction(1)
         if(car.position.x < 10):
             car.setForce(0)
         if(car.position.y > 470):
@@ -91,11 +91,11 @@ class Game:
             pressed = pygame.key.get_pressed()
             self.controls(car, dt, pressed)
 
-            # Logic
-            car.update(dt)
-
             ## Enfore map boundaries on the car
             self.enforceBoundaries(car)
+
+            # Logic
+            car.update(dt)
 
             # Drawing
             self.screen.fill((0,0,0))

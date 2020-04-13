@@ -40,6 +40,10 @@ class Car:
         self.velocity.x = ((self.velocity.x*2)+accel*dt)/2
         self.position.x += self.velocity.x*dt
 
+    http://hyperphysics.phy-astr.gsu.edu/hbase/carcr.html
+    def setReaction(self,react):
+        f = -(0.5*self.mass*(self.velocity.x*self.velocity.x))/self.length
+        self.force = f
 
     def setForce(self,force):
         self.force = force
