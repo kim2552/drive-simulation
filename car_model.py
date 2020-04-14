@@ -2,7 +2,8 @@
 car_model.py
 
 The Car Class represents the physical nature of the car.
-Phsyics model is based on Ackermann steering.
+Physics model is based on equations from the following link:
+https://asawicki.info/Mirror/Car%20Physics%20for%20Games/Car%20Physics%20for%20Games.html
 
 Written by David Joohoon Kim
 joohoon.kim@outlook.com
@@ -12,11 +13,11 @@ from pygame.math import Vector2
 from math import sin, cos, tan, radians, degrees, copysign, pi, sqrt
 
 """ Vehicle Parameters """
-LENGTH = 30  #(0.1m)
-WIDTH = 15   #(0.1m)
-MASS = 500   #(kg)
+LENGTH = 47     #(0.1m)
+WIDTH  = 19     #(0.1m)
+MASS   = 1300   #(kg)
 C_DRAG = 10
-C_RR = 30*C_DRAG
+C_RR   = 30*C_DRAG
 
 
 class Car:
@@ -34,15 +35,24 @@ class Car:
 
     ''' Update the vehicle information '''
     def update(self, dt):
-        F_tract = self.engine_force
         speed=sqrt(self.vel.x*self.vel.x + self.vel.y*self.vel.y)
-        F_drag = -C_DRAG*speed         #TODO::Lookup how to do scalar/vector multiplication
-        F_rr = -C_RR*speed                        #Rolling Resistance C_rr ~= 30*C_drag
+
+        if(self.steer_angle):
+            circ_radius = LENGTH / (sin(self.steer_angle))
+            ang_vel = speed / circ_radius
+            self.orient += ang_vel
+
+        heading = Vector2(cos(self.orient*pi/180.0),sin(self.orient*pi/180.0))
+        F_tract = self.engine_force*heading
+        F_drag = -C_DRAG*heading*speed         #TODO::Lookup how to do scalar/vector multiplication
+        F_rr = -C_RR*heading*speed                        #Rolling Resistance C_rr ~= 30*C_drag
         F_long = F_tract + F_drag + F_rr
 
-        self.accel.x = F_long / MASS
+        self.accel = F_long / MASS
         self.vel.x = self.vel.x + (self.accel.x*dt)
-        self.pos.x = self.pos.x + (self.vel.x*dt)
+        self.vel.y = self.vel.y + (self.accel.y*dt)
+        self.pos.x = self.pos.x + cos(self.orient*pi/180.0)*(self.vel.x*dt)
+        self.pos.y = self.pos.y + sin(self.orient*pi/180.0)*(self.vel.y*dt)
         print("EngineForce=",self.engine_force)
         print("F_long=",F_long)
         print("accel=",self.accel)

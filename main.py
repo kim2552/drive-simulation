@@ -4,7 +4,6 @@ CarSimPy
 This a physics based car simulation ran on Python.
 Attempts to model the physics of a car based on several factors.
 The simulation runs on PyGame. (Current version 2.0.0dev6)
-https://asawicki.info/Mirror/Car%20Physics%20for%20Games/Car%20Physics%20for%20Games.html
 
 Written by David Joohoon Kim
 joohoon.kim@outlook.com
@@ -43,15 +42,15 @@ class Game:
     """ TODO::Refine Controls for 2 wheel steering """
     def controls(self, car, dt, pressed):
         if pressed[pygame.K_LEFT]:
-            car.setSteerAngle(5)
-        elif pressed[pygame.K_RIGHT]:
             car.setSteerAngle(-5)
+        elif pressed[pygame.K_RIGHT]:
+            car.setSteerAngle(5)
         else:
             car.setSteerAngle(0)
         if pressed[pygame.K_UP]:
-            car.setEngineForce(1000)
+            car.setEngineForce(10000)
         elif pressed[pygame.K_DOWN]:
-            car.setEngineForce(-1000)
+            car.setEngineForce(-10000)
         else:
             car.setEngineForce(0)
 
