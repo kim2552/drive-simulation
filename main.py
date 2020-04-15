@@ -30,7 +30,7 @@ class Game:
         """ initialize screen """
         pygame.init()
         pygame.display.set_caption("CarSimPy")
-        self.car_start_pos_x = SCREEN_WIDTH/2
+        self.car_start_pos_x = 0
         self.car_start_pos_y = SCREEN_HEIGHT/2
         self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
         self.clock = pygame.time.Clock()
@@ -48,7 +48,7 @@ class Game:
         else:
             car.setSteerAngle(0)
         if pressed[pygame.K_UP]:
-            car.setEngineForce(40000)
+            car.setEngineForce(10000)
         elif pressed[pygame.K_DOWN]:
             car.setBraking(1)
         else:

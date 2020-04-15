@@ -16,7 +16,7 @@ from math import sin, cos, tan, radians, degrees, copysign, pi, sqrt
 LENGTH = 47     #(0.1m)
 WIDTH  = 19     #(0.1m)
 MASS   = 1300   #(kg)
-C_DRAG = 5 
+C_DRAG = 50     #0.4257
 C_RR   = 30*C_DRAG
 C_BRAKE = 20000
 
@@ -53,17 +53,15 @@ class Car:
             F_braking = Vector2(0,0)
 
         F_tract = self.engine_force*heading
-        F_drag = -C_DRAG*heading*speed         #TODO::Lookup how to do scalar/vector multiplication
-        F_rr = -C_RR*heading*speed                        #Rolling Resistance C_rr ~= 30*C_drag
-        F_long = F_braking + F_tract + F_drag + F_rr
+        F_drag = -C_DRAG*self.vel               #TODO::Lookup how to do scalar/vector multiplication
+        F_rr = -C_RR*self.vel                   #Rolling Resistance C_rr ~= 30*C_drag
+        F_long = F_tract + F_braking + F_drag + F_rr
 
         self.accel = F_long / MASS
         self.vel.x = self.vel.x + (self.accel.x*dt)
         self.vel.y = self.vel.y + (self.accel.y*dt)
         self.pos.x = self.pos.x + (self.vel.x*dt)
         self.pos.y = self.pos.y + (self.vel.y*dt)
-        print("cos()=",cos(self.orient*pi/180.0))
-        print("sin()=",sin(-self.orient*pi/180.0))
         print("heading=",heading)
         print("EngineForce=",self.engine_force)
         print("F_long=",F_long)
