@@ -42,17 +42,18 @@ class Game:
     """ TODO::Refine Controls for 2 wheel steering """
     def controls(self, car, dt, pressed):
         if pressed[pygame.K_LEFT]:
-            car.setSteerAngle(-5)
+            car.setSteerAngle(-10)
         elif pressed[pygame.K_RIGHT]:
-            car.setSteerAngle(5)
+            car.setSteerAngle(10)
         else:
             car.setSteerAngle(0)
         if pressed[pygame.K_UP]:
-            car.setEngineForce(10000)
+            car.setEngineForce(40000)
         elif pressed[pygame.K_DOWN]:
-            car.setEngineForce(-10000)
+            car.setBraking(1)
         else:
             car.setEngineForce(0)
+            car.setBraking(0)
 
     """ draws the screen and objects """
     def draw(self, car):

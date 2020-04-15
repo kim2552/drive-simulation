@@ -16,8 +16,9 @@ from math import sin, cos, tan, radians, degrees, copysign, pi, sqrt
 LENGTH = 47     #(0.1m)
 WIDTH  = 19     #(0.1m)
 MASS   = 1300   #(kg)
-C_DRAG = 10
+C_DRAG = 5 
 C_RR   = 30*C_DRAG
+C_BRAKE = 20000
 
 
 class Car:
@@ -28,6 +29,7 @@ class Car:
         self.engine_force = 0.0
         self.steer_angle = 0.0
         self.orient = 0.0
+        self.brake_b = 0
 
         # Threshold Constants
         self.max_steer = max_steer
@@ -40,19 +42,29 @@ class Car:
         if(self.steer_angle):
             circ_radius = LENGTH / (sin(self.steer_angle))
             ang_vel = speed / circ_radius
-            self.orient += ang_vel
+            self.orient = (self.orient + ang_vel)%360
 
-        heading = Vector2(cos(self.orient*pi/180.0),sin(self.orient*pi/180.0))
+        heading = Vector2(cos(self.orient*pi/180.0),sin(-self.orient*pi/180.0))
+        if(self.brake_b and speed>0):
+            F_tract = Vector2(0,0)
+            F_braking = -heading*C_BRAKE
+        else:
+            F_tract = self.engine_force*heading
+            F_braking = Vector2(0,0)
+
         F_tract = self.engine_force*heading
         F_drag = -C_DRAG*heading*speed         #TODO::Lookup how to do scalar/vector multiplication
         F_rr = -C_RR*heading*speed                        #Rolling Resistance C_rr ~= 30*C_drag
-        F_long = F_tract + F_drag + F_rr
+        F_long = F_braking + F_tract + F_drag + F_rr
 
         self.accel = F_long / MASS
         self.vel.x = self.vel.x + (self.accel.x*dt)
         self.vel.y = self.vel.y + (self.accel.y*dt)
-        self.pos.x = self.pos.x + cos(self.orient*pi/180.0)*(self.vel.x*dt)
-        self.pos.y = self.pos.y + sin(self.orient*pi/180.0)*(self.vel.y*dt)
+        self.pos.x = self.pos.x + (self.vel.x*dt)
+        self.pos.y = self.pos.y + (self.vel.y*dt)
+        print("cos()=",cos(self.orient*pi/180.0))
+        print("sin()=",sin(-self.orient*pi/180.0))
+        print("heading=",heading)
         print("EngineForce=",self.engine_force)
         print("F_long=",F_long)
         print("accel=",self.accel)
@@ -65,6 +77,9 @@ class Car:
 
     def setSteerAngle(self,a):
         self.steer_angle = a
+
+    def setBraking(self,b):
+        self.brake_b = b
 
     def getLength(self):
         return LENGTH
