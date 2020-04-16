@@ -18,7 +18,6 @@ WIDTH  = 19     #(0.1m)
 MASS   = 1300   #(kg)
 C_DRAG = 50     #0.4257
 C_RR   = 30*C_DRAG
-C_BRAKE = 20000
 
 
 class Car:
@@ -45,17 +44,11 @@ class Car:
             self.orient = (self.orient + ang_vel)%360
 
         heading = Vector2(cos(self.orient*pi/180.0),sin(-self.orient*pi/180.0))
-        if(self.brake_b and speed>0):
-            F_tract = Vector2(0,0)
-            F_braking = -heading*C_BRAKE
-        else:
-            F_tract = self.engine_force*heading
-            F_braking = Vector2(0,0)
 
         F_tract = self.engine_force*heading
         F_drag = -C_DRAG*self.vel               #TODO::Lookup how to do scalar/vector multiplication
         F_rr = -C_RR*self.vel                   #Rolling Resistance C_rr ~= 30*C_drag
-        F_long = F_tract + F_braking + F_drag + F_rr
+        F_long = F_tract + F_drag + F_rr
 
         self.accel = F_long / MASS
         self.vel.x = self.vel.x + (self.accel.x*dt)

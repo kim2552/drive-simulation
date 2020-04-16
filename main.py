@@ -48,7 +48,7 @@ class Game:
         else:
             car.setSteerAngle(0)
         if pressed[pygame.K_UP]:
-            car.setEngineForce(10000)
+            car.setEngineForce(500000)
         elif pressed[pygame.K_DOWN]:
             car.setBraking(1)
         else:
