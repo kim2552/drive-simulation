@@ -18,6 +18,7 @@ WIDTH  = 19     #(0.1m)
 MASS   = 1300   #(kg)
 C_DRAG = 50     #0.4257
 C_RR   = 30*C_DRAG
+C_BRAKE = 1000000
 
 
 class Car:
@@ -46,6 +47,12 @@ class Car:
         heading = Vector2(cos(self.orient*pi/180.0),sin(-self.orient*pi/180.0))
 
         F_tract = self.engine_force*heading
+
+        if(((self.vel.x>=0 and heading.x>=0)or(self.vel.x<=0 and heading.x<=0)) and\
+           ((self.vel.y>=0 and heading.y>=0)or(self.vel.y<=0 and heading.y<=0)) and\
+             self.brake_b):
+            F_tract = -heading*C_BRAKE
+
         F_drag = -C_DRAG*self.vel               #TODO::Lookup how to do scalar/vector multiplication
         F_rr = -C_RR*self.vel                   #Rolling Resistance C_rr ~= 30*C_drag
         F_long = F_tract + F_drag + F_rr
@@ -55,9 +62,10 @@ class Car:
         self.vel.y = self.vel.y + (self.accel.y*dt)
         self.pos.x = self.pos.x + (self.vel.x*dt)
         self.pos.y = self.pos.y + (self.vel.y*dt)
+        print("speed=",speed)
         print("heading=",heading)
         print("EngineForce=",self.engine_force)
-        print("F_long=",F_long)
+        print("F_tract=",F_tract)
         print("accel=",self.accel)
         print("velocity=",self.vel)
         print("position=",self.pos)

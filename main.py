@@ -21,8 +21,8 @@ current_dir = os.path.dirname(os.path.abspath(__file__))
 image_path = os.path.join(current_dir, "car.png")
 car_image = pygame.image.load(image_path)
 
-SCREEN_WIDTH = 640
-SCREEN_HEIGHT = 480
+SCREEN_WIDTH = 1280
+SCREEN_HEIGHT = 800
 GAME_TICKS = 60
 
 class Game:
@@ -40,6 +40,7 @@ class Game:
 
     """ defines the controls of the car """
     """ TODO::Refine Controls for 2 wheel steering """
+    """ TODO::Use something else for detecting keys, replace if else"""
     def controls(self, car, dt, pressed):
         if pressed[pygame.K_LEFT]:
             car.setSteerAngle(-10)
