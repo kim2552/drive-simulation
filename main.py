@@ -30,13 +30,27 @@ class Game:
         """ initialize screen """
         pygame.init()
         pygame.display.set_caption("CarSimPy")
-        self.car_start_pos_x = 0
+        self.car_start_pos_x = 50
         self.car_start_pos_y = SCREEN_HEIGHT/2
         self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
         self.clock = pygame.time.Clock()
         self.ticks = GAME_TICKS
         self.exit = False
         self.car_image = None
+
+    def enforceBoundary(self, car):
+        if(car.pos.x > SCREEN_WIDTH-10):
+            car.pos.x = SCREEN_WIDTH-11
+            car.vel = Vector2(0,0)
+        if(car.pos.x < 10):
+            car.pos.x = 11
+            car.vel = Vector2(0,0)
+        if(car.pos.y > SCREEN_HEIGHT-10):
+            car.pos.y = SCREEN_HEIGHT-11
+            car.vel = Vector2(0,0)
+        if(car.pos.y < 10):
+            car.pos.y = 11
+            car.vel = Vector2(0,0)
 
     """ defines the controls of the car """
     """ TODO::Refine Controls for 2 wheel steering """
@@ -84,6 +98,7 @@ class Game:
 
             # Logic
             car.update(dt)
+            self.enforceBoundary(car)
 
             # Drawing
             self.screen.fill((0,0,0))
