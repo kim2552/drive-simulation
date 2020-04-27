@@ -30,6 +30,7 @@ class Car:
         self.steer_angle = 0.0
         self.orient = 0.0
         self.brake_b = 0
+        self.gear = 1               #0:park, 1:drive, 2:reverse
 
         # Threshold Constants
         self.max_steer = max_steer
@@ -48,10 +49,14 @@ class Car:
 
         F_tract = self.engine_force*heading
 
-        if(((self.vel.x>=0 and heading.x>=0)or(self.vel.x<=0 and heading.x<=0)) and\
-           ((self.vel.y>=0 and heading.y>=0)or(self.vel.y<=0 and heading.y<=0)) and\
-             self.brake_b):
+        if( ((self.vel.x>=0 and heading.x>=0)or(self.vel.x<=0 and heading.x<=0)) and\
+            ((self.vel.y>=0 and heading.y>=0)or(self.vel.y<=0 and heading.y<=0)) and\
+             self.brake_b and (self.gear is 1) ):
             F_tract = -heading*C_BRAKE
+        if( ((self.vel.x<=0 and heading.x>=0)or(self.vel.x>=0 and heading.x<=0)) and\
+            ((self.vel.y<=0 and heading.y>=0)or(self.vel.y>=0 and heading.y<=0)) and\
+             self.brake_b and (self.gear is 2) ):
+            F_tract = heading*C_BRAKE
 
         F_drag = -C_DRAG*self.vel               #TODO::Lookup how to do scalar/vector multiplication
         F_rr = -C_RR*self.vel                   #Rolling Resistance C_rr ~= 30*C_drag
@@ -70,6 +75,9 @@ class Car:
         print("velocity=",self.vel)
         print("position=",self.pos)
 
+
+    def setGear(self,gear):
+        self.gear=gear
 
     def setEngineForce(self,f):
         self.engine_force = f
