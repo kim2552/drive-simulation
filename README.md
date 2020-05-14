@@ -1,4 +1,4 @@
-# carsimpy
+# CarSimPy
 A car simulation using python
 
 This simulation is intended to understand the physics of a car on a 2D plane.
