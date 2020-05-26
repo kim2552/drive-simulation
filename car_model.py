@@ -13,9 +13,10 @@ from pygame.math import Vector2
 from math import sin, cos, tan, radians, degrees, copysign, pi, sqrt
 
 """ Vehicle Parameters """
-LENGTH = 47     #(0.1m)
-WIDTH  = 19     #(0.1m)
-MASS   = 1300   #(kg)
+SCALE = 2             #TODO::Make SCALE a global parameter from main.py
+LENGTH = 22*SCALE     #(0.1m)
+WIDTH  = 11*SCALE     #(0.1m)
+MASS   = 1300/SCALE   #(kg)
 C_DRAG = 50     #0.4257
 C_RR   = 30*C_DRAG
 C_BRAKE = 1000000
@@ -67,12 +68,12 @@ class Car:
         self.vel.y = self.vel.y + (self.accel.y*dt)
         self.pos.x = self.pos.x + (self.vel.x*dt)
         self.pos.y = self.pos.y + (self.vel.y*dt)
-        print("speed=",speed)
-        print("heading=",heading)
-        print("EngineForce=",self.engine_force)
-        print("F_tract=",F_tract)
-        print("accel=",self.accel)
-        print("velocity=",self.vel)
+#        print("speed=",speed)
+#        print("heading=",heading)
+#        print("EngineForce=",self.engine_force)
+#        print("F_tract=",F_tract)
+#        print("accel=",self.accel)
+#        print("velocity=",self.vel)
         print("position=",self.pos)
 
 
@@ -96,6 +97,9 @@ class Car:
 
     def getPosition(self):
         return self.pos
+
+    def getAccel(self):
+        return self.accel
 
     def getOrientation(self):
         return self.orient
