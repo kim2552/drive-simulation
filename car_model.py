@@ -13,14 +13,14 @@ from pygame.math import Vector2
 from math import sin, cos, tan, radians, degrees, copysign, pi, sqrt
 
 """ Vehicle Parameters """
-SCALE = 2             #TODO::Make SCALE a global parameter from main.py
+SCALE = 1             #TODO::Make SCALE a global parameter from main.py
 LENGTH = 22*SCALE     #(0.1m)
 WIDTH  = 11*SCALE     #(0.1m)
 MASS   = 1300/SCALE   #(kg)
 C_DRAG = 50     #0.4257
 C_RR   = 30*C_DRAG
 C_BRAKE = 1000000
-
+POS_BUFFER_LENGTH = 60
 
 class Car:
     def __init__(self,x,y,orient=90,max_steer=0,max_speed=5,max_accel=5.0):
@@ -32,6 +32,8 @@ class Car:
         self.orient = 0.0
         self.brake_b = 0
         self.gear = 1               #0:park, 1:drive, 2:reverse
+        self.prev_pos = Vector2(0,0)
+        self.pos_buf = Vector2(0,0)
 
         # Threshold Constants
         self.max_steer = max_steer
@@ -39,6 +41,7 @@ class Car:
 
     ''' Update the vehicle information '''
     def update(self, dt):
+
         speed=sqrt(self.vel.x*self.vel.x + self.vel.y*self.vel.y)
 
         if(self.steer_angle):
@@ -66,8 +69,12 @@ class Car:
         self.accel = F_long / MASS
         self.vel.x = self.vel.x + (self.accel.x*dt)
         self.vel.y = self.vel.y + (self.accel.y*dt)
-        self.pos.x = self.pos.x + (self.vel.x*dt)
-        self.pos.y = self.pos.y + (self.vel.y*dt)
+        self.pos.x = int(self.pos.x + (self.vel.x*dt))
+        self.pos.y = int(self.pos.y + (self.vel.y*dt))
+        if(self.pos != self.pos_buf):
+            self.prev_pos = self.pos
+            self.pos_buf = self.pos
+        self.pos_buf = self.pos
 #        print("speed=",speed)
 #        print("heading=",heading)
 #        print("EngineForce=",self.engine_force)
@@ -97,6 +104,9 @@ class Car:
 
     def getPosition(self):
         return self.pos
+
+    def getPrevPos(self):
+        return self.prev_pos
 
     def getAccel(self):
         return self.accel

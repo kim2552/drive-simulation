@@ -26,12 +26,13 @@ import map_model
 current_dir = os.path.dirname(os.path.abspath(__file__))
 image_path = os.path.join(current_dir, "assets/")
 car_image = pygame.image.load(image_path+"car.png")
-#background_image = pygame.image.load(image_path+"background.png")
-background_image = pygame.image.load(image_path+"mario_circuit_one.png")
+background_image = pygame.image.load(image_path+"background.png")
+#background_image = pygame.image.load(image_path+"mario_circuit_one.png")
 
 """ Screen Parameters """
-SCREEN_WIDTH = 512
-SCREEN_HEIGHT = 512
+SCALE = 2
+SCREEN_WIDTH = 256*SCALE
+SCREEN_HEIGHT = 256*SCALE
 GAME_TICKS = 60
 
 class Game:
@@ -41,8 +42,8 @@ class Game:
         pygame.display.set_caption("CarSimPy")
 
         # Starting Position
-        car_pos_x = SCREEN_WIDTH/2
-        car_pos_y = SCREEN_HEIGHT/2
+        car_pos_x = (SCREEN_WIDTH/2)-100
+        car_pos_y = (SCREEN_HEIGHT/2)-100
         map_pos_x = car_pos_x
         map_pos_y = car_pos_y
 
@@ -56,61 +57,43 @@ class Game:
         self.car = car_model.Car(car_pos_x, car_pos_y)
         self.map = map_model.Map(map_pos_x,map_pos_y)
 
-    def enforceBoundary(self, car):
-        if(car.pos.x > SCREEN_WIDTH-20-BORDER):
-            car.pos.x = SCREEN_WIDTH-21-BORDER
-            car.vel = Vector2(0,0)
-        if(car.pos.x < 20+BORDER):
-            car.pos.x = 21+BORDER
-            car.vel = Vector2(0,0)
-        if(car.pos.y > SCREEN_HEIGHT-20-BORDER):
-            car.pos.y = SCREEN_HEIGHT-21-BORDER
-            car.vel = Vector2(0,0)
-        if(car.pos.y < 20+BORDER):
-            car.pos.y = 21+BORDER
-            car.vel = Vector2(0,0)
+    def enforceBoundary(self, car, env):
+        x = SCREEN_WIDTH//2
+        y = SCREEN_HEIGHT//2
+        if(x > env.getPos().x+env.getDim().x-car.getLength()-env.getBorder()):
+            car.pos = car.getPrevPos()
+            car.vel.x = 0
+        if(x < env.getPos().x+env.getBorder()):
+            car.pos = car.getPrevPos()
+            car.vel.x = 0
+        if(y > env.getPos().y+env.getDim().y-car.getLength()-env.getBorder()):
+            car.pos = car.getPrevPos()
+            car.vel.y = 0
+        if(y < env.getPos().y+env.getBorder()):
+            car.pos = car.getPrevPos()
+            car.vel.y = 0
 
     """ defines the controls of the car """
     """ TODO::Refine Controls for 2 wheel steering """
     """ TODO::Use something else for detecting keys, replace if else"""
     def controls(self, car, dt, pressed):
-        reverse = True
-        if reverse:
-            if pressed[pygame.K_LEFT]:
-                car.setSteerAngle(-10)
-            elif pressed[pygame.K_RIGHT]:
-                car.setSteerAngle(10)
-            else:
-                car.setSteerAngle(0)
-            if pressed[pygame.K_UP]:
-                car.setEngineForce(500000)
-                car.setGear(1)
-            elif pressed[pygame.K_DOWN]:
-                car.setEngineForce(-200000)
-                car.setGear(2)
-            elif pressed[pygame.K_b]:
-                car.setBraking(1)
-            else:
-                car.setEngineForce(0)
-                car.setBraking(0)
+        if pressed[pygame.K_LEFT]:
+            car.setSteerAngle(-10)
+        elif pressed[pygame.K_RIGHT]:
+            car.setSteerAngle(10)
         else:
-            if pressed[pygame.K_LEFT]:
-                car.setSteerAngle(-10)
-            elif pressed[pygame.K_RIGHT]:
-                car.setSteerAngle(10)
-            else:
-                car.setSteerAngle(0)
-            if pressed[pygame.K_UP]:
-                car.setEngineForce(500000)
-                car.setGear(1)
-            elif pressed[pygame.K_DOWN]:
-                car.setEngineForce(-200000)
-                car.setGear(2)
-            elif pressed[pygame.K_b]:
-                car.setBraking(1)
-            else:
-                car.setEngineForce(0)
-                car.setBraking(0)
+            car.setSteerAngle(0)
+        if pressed[pygame.K_UP]:
+            car.setEngineForce(500000)
+            car.setGear(1)
+        elif pressed[pygame.K_DOWN]:
+            car.setEngineForce(-200000)
+            car.setGear(2)
+        elif pressed[pygame.K_b]:
+            car.setBraking(1)
+        else:
+            car.setEngineForce(0)
+            car.setBraking(0)
 
     """ draws the screen and objects """
     def draw(self, car, env):
@@ -146,9 +129,10 @@ class Game:
             self.controls(self.car, dt, pressed)
 
             # Logic
+            print("CARPOSX: ",self.car.pos.x)
+            self.enforceBoundary(self.car,self.map)
             self.car.update(dt)
-#            self.enforceBoundary(c)
-            self.map.update(dt,self.car.getAccel())
+            self.map.update(dt,self.car.getAccel(),self.car.getPosition())
 
             # Drawing
             self.screen.fill((0,0,0))
