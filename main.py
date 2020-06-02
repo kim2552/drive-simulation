@@ -7,22 +7,32 @@ The simulation runs on PyGame. (Current version 2.0.0dev6)
 
 Written by David Joohoon Kim
 joohoon.kim@outlook.com
+
+TODO
+- Add collision with map environment
+- Choose a scaling method for screen and environment
 """
 import os
 from math import sin, cos, tan, radians, degrees, copysign, pi
 import pygame
 from pygame.math import Vector2
+from pygame.locals import *
 
 # local import
 import car_model
+import map_model
 
 # Get image of car
 current_dir = os.path.dirname(os.path.abspath(__file__))
-image_path = os.path.join(current_dir, "car.png")
-car_image = pygame.image.load(image_path)
+image_path = os.path.join(current_dir, "assets/")
+car_image = pygame.image.load(image_path+"car.png")
+background_image = pygame.image.load(image_path+"background.png")
+#background_image = pygame.image.load(image_path+"mario_circuit_one.png")
 
-SCREEN_WIDTH = 1280
-SCREEN_HEIGHT = 800
+""" Screen Parameters """
+SCALE = 2
+SCREEN_WIDTH = 256*SCALE
+SCREEN_HEIGHT = 256*SCALE
 GAME_TICKS = 60
 
 class Game:
@@ -30,27 +40,38 @@ class Game:
         """ initialize screen """
         pygame.init()
         pygame.display.set_caption("CarSimPy")
-        self.car_start_pos_x = 50
-        self.car_start_pos_y = SCREEN_HEIGHT/2
+
+        # Starting Position
+        car_pos_x = (SCREEN_WIDTH/2)-100
+        car_pos_y = (SCREEN_HEIGHT/2)-100
+        map_pos_x = car_pos_x
+        map_pos_y = car_pos_y
+
         self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
         self.clock = pygame.time.Clock()
         self.ticks = GAME_TICKS
         self.exit = False
         self.car_image = None
+        self.background_image = None
 
-    def enforceBoundary(self, car):
-        if(car.pos.x > SCREEN_WIDTH-10):
-            car.pos.x = SCREEN_WIDTH-11
-            car.vel = Vector2(0,0)
-        if(car.pos.x < 10):
-            car.pos.x = 11
-            car.vel = Vector2(0,0)
-        if(car.pos.y > SCREEN_HEIGHT-10):
-            car.pos.y = SCREEN_HEIGHT-11
-            car.vel = Vector2(0,0)
-        if(car.pos.y < 10):
-            car.pos.y = 11
-            car.vel = Vector2(0,0)
+        self.car = car_model.Car(car_pos_x, car_pos_y)
+        self.map = map_model.Map(map_pos_x,map_pos_y)
+
+    def enforceBoundary(self, car, env):
+        x = SCREEN_WIDTH//2
+        y = SCREEN_HEIGHT//2
+        if(x > env.getPos().x+env.getDim().x-car.getLength()-env.getBorder()):
+            car.pos = car.getPrevPos()
+            car.vel.x = 0
+        if(x < env.getPos().x+env.getBorder()):
+            car.pos = car.getPrevPos()
+            car.vel.x = 0
+        if(y > env.getPos().y+env.getDim().y-car.getLength()-env.getBorder()):
+            car.pos = car.getPrevPos()
+            car.vel.y = 0
+        if(y < env.getPos().y+env.getBorder()):
+            car.pos = car.getPrevPos()
+            car.vel.y = 0
 
     """ defines the controls of the car """
     """ TODO::Refine Controls for 2 wheel steering """
@@ -75,18 +96,23 @@ class Game:
             car.setBraking(0)
 
     """ draws the screen and objects """
-    def draw(self, car):
+    def draw(self, car, env):
+        # Draw background
+        map_width=(int)(env.getDim().x)
+        map_height=(int)(env.getDim().y)
+        self.background_image = pygame.transform.scale(background_image,(map_width,map_height))
+        self.screen.blit(self.background_image, env.getPos())
+
+        # Draw car
         self.car_image = pygame.transform.scale(car_image,(car.getLength(),car.getWidth()))
         rotated = pygame.transform.rotate(self.car_image, car.getOrientation())
         rect = rotated.get_rect()
-        self.screen.blit(rotated, car.getPosition()-(rect.width//2, rect.height//2))
+        self.screen.blit(rotated, (SCREEN_WIDTH//2,SCREEN_HEIGHT//2))
+
         pygame.display.flip()
 
     """ processes the simulation """
     def run(self):
-        # Create car model
-        car = car_model.Car(self.car_start_pos_x, self.car_start_pos_y)
-
         while not self.exit:
             # Convert time from milliseconds to seconds
             dt = self.clock.get_time() / 1000
@@ -95,18 +121,22 @@ class Game:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     self.exit = True
+                elif event.type == VIDEORESIZE:
+                    screen = pygame.display.set_mode(event.dict['size'], HWSURFACE|DOUBLEBUF|RESIZABLE)
 
             # User input
             pressed = pygame.key.get_pressed()
-            self.controls(car, dt, pressed)
+            self.controls(self.car, dt, pressed)
 
             # Logic
-            car.update(dt)
-            self.enforceBoundary(car)
+            print("CARPOSX: ",self.car.pos.x)
+            self.enforceBoundary(self.car,self.map)
+            self.car.update(dt)
+            self.map.update(dt,self.car.getAccel(),self.car.getPosition())
 
             # Drawing
             self.screen.fill((0,0,0))
-            self.draw(car)
+            self.draw(self.car,self.map)
 
             # Update the clock (Called once per frame)
             self.clock.tick(self.ticks)
