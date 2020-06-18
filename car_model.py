@@ -38,6 +38,7 @@ class Car:
         self.terrain = 0
         self.drag = C_DRAG_ROAD
         self.RR = 30*self.drag
+        self.ang_vel = 0
 
         # Threshold Constants
         self.max_steer = max_steer
@@ -51,9 +52,13 @@ class Car:
         if(self.terrain is 1):
             self.steer_angle += randint(-2,2)
 
+        self.ang_vel = 0
+
         if(self.steer_angle):
             circ_radius = LENGTH / (sin(self.steer_angle))
             ang_vel = speed / circ_radius
+            self.ang_vel = ang_vel
+            print("angular velocity = ", ang_vel)
             self.orient = (self.orient + ang_vel)%360
 
         heading = Vector2(cos(self.orient*pi/180.0),sin(-self.orient*pi/180.0))
@@ -135,6 +140,9 @@ class Car:
 
     def getOrientation(self):
         return self.orient
+
+    def getAngVel(self):
+        return self.ang_vel
 
     def setTerrain(self,terrain):
         self.terrain = terrain

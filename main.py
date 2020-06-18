@@ -37,6 +37,7 @@ car_crash_sound = pygame.mixer.Sound(assets_path+"sounds/crash.wav")
 #car_driving_sound = pygame.mixer.Sound(assets_path+"sounds/car_driving.wav")
 car_driving_sound = pygame.mixer.Sound(assets_path+"sounds/car_driving_3.wav")
 car_snow_sound = pygame.mixer.Sound(assets_path+"sounds/car_snow.wav")
+car_skid_sound = pygame.mixer.Sound(assets_path+"sounds/tire_skid.wav")
 
 """ Screen Parameters """
 SCALE = 2
@@ -196,6 +197,10 @@ class Game:
                 if(not(drive_sound)):
                     car_snow_sound.stop()
                     car_driving_sound.stop()
+            if(abs(self.car.getAngVel()) > 2.5):
+                car_skid_sound.play()
+            else:
+                car_skid_sound.stop()
 
             # Update the clock (Called once per frame)
             self.clock.tick(self.ticks)
