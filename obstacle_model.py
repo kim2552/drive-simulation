@@ -1,3 +1,12 @@
+"""
+obstacle_model.py
+
+The Obstacle Class represents obstacles for the car.
+
+Written by David Joohoon Kim
+joohoon.kim@outlook.com
+"""
+
 import pygame
 from pygame.math import Vector2
 from math import sin, cos, tan, radians, degrees, copysign, pi
@@ -30,12 +39,12 @@ class Obstacle:
         self.position.y = pos.y+self.pos_rel_map.y
 
     def CheckBoundary(self,pos_valid,x,y,car):
-        print("X: ",x," and Y: ",y)
-        print("length of car:",car["length"])
-        print("boundaryX:",car["pos"].x+self.getDim().x+self.pos_rel_map.x)
-        print("boundaryX2:",car["pos"].x+self.pos_rel_map.x-car["length"])
-        print("boundaryY:",car["pos"].y+self.getDim().y+self.pos_rel_map.y)
-        print("boundaryY2:",car["pos"].y+self.pos_rel_map.y-car["length"])
+#        print("X: ",x," and Y: ",y)
+#        print("length of car:",car["length"])
+#        print("boundaryX:",car["pos"].x+self.getDim().x+self.pos_rel_map.x)
+#        print("boundaryX2:",car["pos"].x+self.pos_rel_map.x-car["length"])
+#        print("boundaryY:",car["pos"].y+self.getDim().y+self.pos_rel_map.y)
+#        print("boundaryY2:",car["pos"].y+self.pos_rel_map.y-car["length"])
         if( (x <= car["pos"].x+self.pos_rel_map.x+self.getDim().x) and
             (x >= car["pos"].x+self.pos_rel_map.x-car["length"]) and
             (y <= car["pos"].y+self.pos_rel_map.y+self.getDim().y) and

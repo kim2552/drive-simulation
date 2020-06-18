@@ -26,11 +26,17 @@ import obstacle_model
 
 # Get image of car
 current_dir = os.path.dirname(os.path.abspath(__file__))
-image_path = os.path.join(current_dir, "assets/")
-car_image = pygame.image.load(image_path+"car.png")
-background_image = pygame.image.load(image_path+"background.png")
-rock_image = pygame.image.load(image_path+"rock.png")
-#background_image = pygame.image.load(image_path+"mario_circuit_one.png")
+assets_path = os.path.join(current_dir, "assets/")
+car_image = pygame.image.load(assets_path+"car.png")
+background_image = pygame.image.load(assets_path+"background.png")
+rock_image = pygame.image.load(assets_path+"rock.png")
+
+# Sound Effects TODO::Get better sound effects
+pygame.mixer.init()
+car_crash_sound = pygame.mixer.Sound(assets_path+"sounds/car_crash.wav")
+#car_driving_sound = pygame.mixer.Sound(assets_path+"sounds/car_driving.wav")
+car_driving_sound = pygame.mixer.Sound(assets_path+"sounds/car_driving_3.wav")
+car_snow_sound = pygame.mixer.Sound(assets_path+"sounds/car_snow.wav")
 
 """ Screen Parameters """
 SCALE = 2
@@ -59,6 +65,7 @@ class Game:
         self.exit = False
         self.car_image = None
         self.background_image = None
+        self.terrain = 0    #0=road, 1=grass
 
         self.car = car_model.Car(car_pos_x, car_pos_y)
         self.map = map_model.Map(map_pos_x,map_pos_y)
@@ -76,12 +83,19 @@ class Game:
 
         # Check boundaries for object(s)
         pos_valid = [True,True]
-        print(obstacles)
         for ob in obstacles:
             pos_valid = ob.CheckBoundary(pos_valid,x,y,car_info)
         pos_valid = env.CheckBoundary(pos_valid,x,y,car_info)
 
         return pos_valid
+
+    def CheckTerrain(self,car,env):
+        # Get middle of the screen
+        x = SCREEN_WIDTH//2
+        y = SCREEN_HEIGHT//2
+
+        self.terrain = env.CheckTerrain(self.terrain,x,y,car)
+        return self.terrain
 
     """ defines the controls of the car """
     """ TODO::Refine Controls for 2 wheel steering """
@@ -144,6 +158,8 @@ class Game:
             self.controls(self.car, dt, pressed)
 
             # Logic
+            self.terrain = self.CheckTerrain(self.car,self.map)
+            self.car.setTerrain(self.terrain)
             car_info = self.car.calculate(dt)
             pos_valid = self.CheckBoundary(car_info,self.map,self.obstacles)
             self.car.update(dt,car_info,pos_valid)
@@ -154,6 +170,26 @@ class Game:
             # Drawing
             self.screen.fill((0,0,0))
             self.draw(self.car,self.map,self.obstacles)
+
+            # Sound Effects
+            if(not(pos_valid[0]) or not(pos_valid[1])): #Car crashed
+                car_crash_sound.play()
+            drive_sound = False
+            if((abs(car_info["vel"].x) > 50 or abs(car_info["vel"].y) > 50)): #Car speed > 50
+                drive_sound = True
+            if(not(pygame.mixer.Channel(0).get_busy())):    #Prevent sound overlap
+                if(drive_sound):
+                    if(self.terrain is 0):
+                        car_driving_sound.play()
+                    if(self.terrain is 1):
+                        car_snow_sound.play()
+                else:
+                    car_snow_sound.stop()
+                    car_driving_sound.stop()
+            else:
+                if(not(drive_sound)):
+                    car_snow_sound.stop()
+                    car_driving_sound.stop()
 
             # Update the clock (Called once per frame)
             self.clock.tick(self.ticks)

@@ -17,8 +17,8 @@ SCALE = 2             #TODO::Make SCALE a global parameter from main.py
 LENGTH = 22*SCALE     #(0.1m)
 WIDTH  = 11*SCALE     #(0.1m)
 MASS   = 1300/SCALE   #(kg)
-C_DRAG = 50     #0.4257
-C_RR   = 30*C_DRAG
+C_DRAG_ROAD = 50     #0.4257
+C_DRAG_GRASS = 200
 C_BRAKE = 1000000
 POS_BUFFER_LENGTH = 60
 
@@ -34,6 +34,8 @@ class Car:
         self.gear = 1               #0:park, 1:drive, 2:reverse
         self.prev_pos = Vector2(0,0)
         self.pos_buf = Vector2(0,0)
+        self.drag = C_DRAG_ROAD
+        self.RR = 30*self.drag
 
         # Threshold Constants
         self.max_steer = max_steer
@@ -61,9 +63,10 @@ class Car:
             ((self.vel.y<=0 and heading.y>=0)or(self.vel.y>=0 and heading.y<=0)) and\
              self.brake_b and (self.gear is 2) ):
             F_tract = heading*C_BRAKE
-
-        F_drag = -C_DRAG*self.vel
-        F_rr = -C_RR*self.vel                   #Rolling Resistance C_rr ~= 30*C_drag
+        print("C_DRAG = ",self.drag)
+        F_drag = -self.drag*self.vel
+        self.RR = 30*self.drag
+        F_rr = -self.RR*self.vel                   #Rolling Resistance C_rr ~= 30*C_drag
         F_long = F_tract + F_drag + F_rr
 
         accel = F_long / MASS
@@ -127,3 +130,10 @@ class Car:
 
     def getOrientation(self):
         return self.orient
+
+    def setTerrain(self,terrain):
+        if(terrain is 0):
+            self.drag = C_DRAG_ROAD
+        if(terrain is 1):
+            self.drag = C_DRAG_GRASS
+        print("terrain = ",terrain," and C_DRAG=",self.drag)
