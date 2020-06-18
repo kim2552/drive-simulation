@@ -2,12 +2,17 @@ import pygame
 from pygame.math import Vector2
 from math import sin, cos, tan, radians, degrees, copysign, pi
 
+""" Obstacle Parameters """
+SCALE = 1
+LENGTH = 60*SCALE
+WIDTH = 40*SCALE
 
 class Obstacle:
     def __init__(self, x, y, angle=90.0, width = 30, height = 30, max_speed=5, max_accel=0):
-        self.position = Vector2(x,y)
-        self.prev_pos = Vector2(x,y)
+        self.position = Vector2(0.0,0.0)
+        self.pos_rel_map = Vector2(x, y) # Position relative to map
         self.velocity = Vector2(0.0,0.0)
+        self.dim = Vector2(LENGTH,WIDTH)
         self.accel = 0.0
         self.angle = angle
         self.speed = 0.0
@@ -20,26 +25,28 @@ class Obstacle:
         self.max_accel = max_accel
         self.max_speed = max_speed
 
-    ''' Update the vehicle information '''
-    def update(self, dt):
-        self.prev_pos = self.position
+    def update(self,pos):
+        self.position.x = pos.x+self.pos_rel_map.x
+        self.position.y = pos.y+self.pos_rel_map.y
 
-        if(abs(self.speed) < self.max_speed):
-            self.speed += self.accel
+    def CheckBoundary(self,pos_valid,x,y,car):
+        print("X: ",x," and Y: ",y)
+        print("length of car:",car["length"])
+        print("boundaryX:",car["pos"].x+self.getDim().x+self.pos_rel_map.x)
+        print("boundaryX2:",car["pos"].x+self.pos_rel_map.x-car["length"])
+        print("boundaryY:",car["pos"].y+self.getDim().y+self.pos_rel_map.y)
+        print("boundaryY2:",car["pos"].y+self.pos_rel_map.y-car["length"])
+        if( (x <= car["pos"].x+self.pos_rel_map.x+self.getDim().x) and
+            (x >= car["pos"].x+self.pos_rel_map.x-car["length"]) and
+            (y <= car["pos"].y+self.pos_rel_map.y+self.getDim().y) and
+            (y >= car["pos"].y+self.pos_rel_map.y-car["length"]) ):
+            pos_valid[0] = False
+            pos_valid[1] = False
 
-        # Air resistance and friction
-        if(self.speed > 0):
-            self.speed -= 0.1
-        else:
-            if(not(self.accel)):
-                self.speed = 0
+        return pos_valid
 
-        self.position.x += cos(self.angle*pi/180.0)*self.speed
-        self.position.y -= sin(self.angle*pi/180.0)*self.speed
+    def getPosition(self):
+        return self.position
 
-        # Print Characteristics
-#        print("SPEED="+str(self.speed))
-#        print("ANGLE="+str(self.angle))
-#        print("VEL="+str(self.velocity))
-#        print("POS="+str(self.position))
-#        print("ACCEL="+str(self.accel))
+    def getDim(self):
+        return self.dim

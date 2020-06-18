@@ -27,22 +27,21 @@ class Map:
     def update(self,dt,pos):
         self.pos.x = pos.x
         self.pos.y = pos.y
-#        print("Map position:",self.pos)
+        print("Map position:",self.pos)
 
-    def CheckBoundary(self,x,y,car):
-        x_valid = True
-        y_valid = True
-
+    def CheckBoundary(self,pos_valid,x,y,car):
         if(x >= car["pos"].x+self.getDim().x-car["length"]-self.getBorder()):
-            x_valid = False
+            pos_valid[0] = False
         if(x <= car["pos"].x+self.getBorder()):
-            x_valid = False
-        if(y >= car["pos"].y+self.getDim().y-car["length"]-self.getBorder()):
-            y_valid = False
-        if(y <= car["pos"].y+self.getBorder()):
-            y_valid = False
+            pos_valid[0] = False
 
-        return [x_valid,y_valid]
+        #TODO::Change length and width parameter based on orientation
+        if(y >= car["pos"].y+self.getDim().y-car["length"]-self.getBorder()):
+            pos_valid[1] = False
+        if(y <= car["pos"].y+self.getBorder()):
+            pos_valid[1] = False
+
+        return pos_valid
 
     def getPos(self):
         return self.pos

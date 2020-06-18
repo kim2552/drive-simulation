@@ -14,6 +14,7 @@ TODO
 """
 import os
 from math import sin, cos, tan, radians, degrees, copysign, pi
+from random import randint
 import pygame
 from pygame.math import Vector2
 from pygame.locals import *
@@ -21,12 +22,14 @@ from pygame.locals import *
 # local import
 import car_model
 import map_model
+import obstacle_model
 
 # Get image of car
 current_dir = os.path.dirname(os.path.abspath(__file__))
 image_path = os.path.join(current_dir, "assets/")
 car_image = pygame.image.load(image_path+"car.png")
 background_image = pygame.image.load(image_path+"background.png")
+rock_image = pygame.image.load(image_path+"rock.png")
 #background_image = pygame.image.load(image_path+"mario_circuit_one.png")
 
 """ Screen Parameters """
@@ -34,6 +37,9 @@ SCALE = 2
 SCREEN_WIDTH = 256*SCALE
 SCREEN_HEIGHT = 256*SCALE
 GAME_TICKS = 60
+
+""" Game Parameters """
+NUM_OBSTACLES = 5
 
 class Game:
     def __init__(self):
@@ -56,14 +62,24 @@ class Game:
 
         self.car = car_model.Car(car_pos_x, car_pos_y)
         self.map = map_model.Map(map_pos_x,map_pos_y)
+        self.obstacles = []
+        for i in range(NUM_OBSTACLES):
+            x_pos = randint(100,800)
+            y_pos = randint(100,800)
+            rock = obstacle_model.Obstacle(map_pos_x+x_pos,map_pos_y+y_pos)
+            self.obstacles.append(rock)
 
-    def CheckBoundary(self,car_info,env):
+    def CheckBoundary(self,car_info,env,obstacles):
         # Get middle of the screen
         x = SCREEN_WIDTH//2
         y = SCREEN_HEIGHT//2
 
         # Check boundaries for object(s)
-        pos_valid = env.CheckBoundary(x,y,car_info)
+        pos_valid = [True,True]
+        print(obstacles)
+        for ob in obstacles:
+            pos_valid = ob.CheckBoundary(pos_valid,x,y,car_info)
+        pos_valid = env.CheckBoundary(pos_valid,x,y,car_info)
 
         return pos_valid
 
@@ -90,7 +106,7 @@ class Game:
             car.setBraking(0)
 
     """ draws the screen and objects """
-    def draw(self, car, env):
+    def draw(self, car, env, obstacles):
         # Draw background
         map_width=(int)(env.getDim().x)
         map_height=(int)(env.getDim().y)
@@ -102,6 +118,11 @@ class Game:
         rotated = pygame.transform.rotate(self.car_image, car.getOrientation())
         rect = rotated.get_rect()
         self.screen.blit(rotated, (SCREEN_WIDTH//2,SCREEN_HEIGHT//2))
+
+        # Draw obstacle(s)
+        for ob in obstacles:
+            self.rock_image = pygame.transform.scale(rock_image,(int(ob.getDim().x),int(ob.getDim().y)))
+            self.screen.blit(self.rock_image, ob.getPosition())
 
         pygame.display.flip()
 
@@ -124,13 +145,15 @@ class Game:
 
             # Logic
             car_info = self.car.calculate(dt)
-            pos_valid = self.CheckBoundary(car_info,self.map)
+            pos_valid = self.CheckBoundary(car_info,self.map,self.obstacles)
             self.car.update(dt,car_info,pos_valid)
             self.map.update(dt,self.car.getPosition())
+            for ob in self.obstacles:
+                ob.update(self.map.getPos())
 
             # Drawing
             self.screen.fill((0,0,0))
-            self.draw(self.car,self.map)
+            self.draw(self.car,self.map,self.obstacles)
 
             # Update the clock (Called once per frame)
             self.clock.tick(self.ticks)

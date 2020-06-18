@@ -62,7 +62,7 @@ class Car:
              self.brake_b and (self.gear is 2) ):
             F_tract = heading*C_BRAKE
 
-        F_drag = -C_DRAG*self.vel               #TODO::Lookup how to do scalar/vector multiplication
+        F_drag = -C_DRAG*self.vel
         F_rr = -C_RR*self.vel                   #Rolling Resistance C_rr ~= 30*C_drag
         F_long = F_tract + F_drag + F_rr
 
@@ -94,8 +94,8 @@ class Car:
         else:
             self.vel.y = 0
 
-#        print("position=",self.pos)
-#        print("velocity=",self.vel)
+        print("Car position=",self.pos)
+#        print("Car velocity=",self.vel)
 
 
     def setGear(self,gear):
