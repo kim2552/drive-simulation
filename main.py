@@ -57,21 +57,15 @@ class Game:
         self.car = car_model.Car(car_pos_x, car_pos_y)
         self.map = map_model.Map(map_pos_x,map_pos_y)
 
-    def enforceBoundary(self, car, env):
+    def CheckBoundary(self,car_info,env):
+        # Get middle of the screen
         x = SCREEN_WIDTH//2
         y = SCREEN_HEIGHT//2
-        if(x > env.getPos().x+env.getDim().x-car.getLength()-env.getBorder()):
-            car.pos = car.getPrevPos()
-            car.vel.x = 0
-        if(x < env.getPos().x+env.getBorder()):
-            car.pos = car.getPrevPos()
-            car.vel.x = 0
-        if(y > env.getPos().y+env.getDim().y-car.getLength()-env.getBorder()):
-            car.pos = car.getPrevPos()
-            car.vel.y = 0
-        if(y < env.getPos().y+env.getBorder()):
-            car.pos = car.getPrevPos()
-            car.vel.y = 0
+
+        # Check boundaries for object(s)
+        pos_valid = env.CheckBoundary(x,y,car_info)
+
+        return pos_valid
 
     """ defines the controls of the car """
     """ TODO::Refine Controls for 2 wheel steering """
@@ -129,10 +123,10 @@ class Game:
             self.controls(self.car, dt, pressed)
 
             # Logic
-            print("CARPOSX: ",self.car.pos.x)
-            self.enforceBoundary(self.car,self.map)
-            self.car.update(dt)
-            self.map.update(dt,self.car.getAccel(),self.car.getPosition())
+            car_info = self.car.calculate(dt)
+            pos_valid = self.CheckBoundary(car_info,self.map)
+            self.car.update(dt,car_info,pos_valid)
+            self.map.update(dt,self.car.getPosition())
 
             # Drawing
             self.screen.fill((0,0,0))

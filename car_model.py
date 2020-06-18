@@ -13,7 +13,7 @@ from pygame.math import Vector2
 from math import sin, cos, tan, radians, degrees, copysign, pi, sqrt
 
 """ Vehicle Parameters """
-SCALE = 1             #TODO::Make SCALE a global parameter from main.py
+SCALE = 2             #TODO::Make SCALE a global parameter from main.py
 LENGTH = 22*SCALE     #(0.1m)
 WIDTH  = 11*SCALE     #(0.1m)
 MASS   = 1300/SCALE   #(kg)
@@ -29,7 +29,7 @@ class Car:
         self.accel = Vector2(0.0,0.0)
         self.engine_force = 0.0
         self.steer_angle = 0.0
-        self.orient = 0.0
+        self.orient = orient
         self.brake_b = 0
         self.gear = 1               #0:park, 1:drive, 2:reverse
         self.prev_pos = Vector2(0,0)
@@ -38,10 +38,10 @@ class Car:
         # Threshold Constants
         self.max_steer = max_steer
         self.max_speed = max_speed
-
-    ''' Update the vehicle information '''
-    def update(self, dt):
-
+    ''' Calculate vehicle position '''
+    def calculate(self, dt):
+        pos_local  = Vector2(0.0,0.0)
+        vel_local = Vector2(0.0,0.0)
         speed=sqrt(self.vel.x*self.vel.x + self.vel.y*self.vel.y)
 
         if(self.steer_angle):
@@ -66,22 +66,36 @@ class Car:
         F_rr = -C_RR*self.vel                   #Rolling Resistance C_rr ~= 30*C_drag
         F_long = F_tract + F_drag + F_rr
 
-        self.accel = F_long / MASS
-        self.vel.x = self.vel.x + (self.accel.x*dt)
-        self.vel.y = self.vel.y + (self.accel.y*dt)
-        self.pos.x = int(self.pos.x + (self.vel.x*dt))
-        self.pos.y = int(self.pos.y + (self.vel.y*dt))
-        if(self.pos != self.pos_buf):
-            self.prev_pos = self.pos
-            self.pos_buf = self.pos
-        self.pos_buf = self.pos
-#        print("speed=",speed)
-#        print("heading=",heading)
-#        print("EngineForce=",self.engine_force)
-#        print("F_tract=",F_tract)
-#        print("accel=",self.accel)
+        accel = F_long / MASS
+        vel_local.x = self.vel.x + (accel.x*dt)
+        vel_local.y = self.vel.y + (accel.y*dt)
+        pos_local.x = self.pos.x + (vel_local.x*dt)
+        pos_local.y = self.pos.y + (vel_local.y*dt)
+        length = self.getLength()
+        width = self.getWidth()
+
+        info = { "pos": pos_local, "vel": vel_local,
+                 "length": length, "width": width }
+#        print("car_model.info: ", info)
+
+        return info
+
+
+    ''' Update the vehicle information '''
+    def update(self, dt, car_info, pos_valid):
+        if(pos_valid[0]):
+            self.pos.x = car_info["pos"].x
+            self.vel.x = car_info["vel"].x
+        else:
+            self.vel.x = 0
+        if(pos_valid[1]):
+            self.pos.y = car_info["pos"].y
+            self.vel.y = car_info["vel"].y
+        else:
+            self.vel.y = 0
+
+#        print("position=",self.pos)
 #        print("velocity=",self.vel)
-        print("position=",self.pos)
 
 
     def setGear(self,gear):
