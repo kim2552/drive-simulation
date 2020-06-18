@@ -33,7 +33,7 @@ rock_image = pygame.image.load(assets_path+"rock.png")
 
 # Sound Effects TODO::Get better sound effects
 pygame.mixer.init()
-car_crash_sound = pygame.mixer.Sound(assets_path+"sounds/car_crash.wav")
+car_crash_sound = pygame.mixer.Sound(assets_path+"sounds/crash.wav")
 #car_driving_sound = pygame.mixer.Sound(assets_path+"sounds/car_driving.wav")
 car_driving_sound = pygame.mixer.Sound(assets_path+"sounds/car_driving_3.wav")
 car_snow_sound = pygame.mixer.Sound(assets_path+"sounds/car_snow.wav")
@@ -45,7 +45,7 @@ SCREEN_HEIGHT = 256*SCALE
 GAME_TICKS = 60
 
 """ Game Parameters """
-NUM_OBSTACLES = 5
+NUM_OBSTACLES = 1
 
 class Game:
     def __init__(self):
@@ -143,6 +143,9 @@ class Game:
     """ processes the simulation """
     def run(self):
         while not self.exit:
+            #Local save of parameters
+            prev_terrain = self.terrain
+
             # Convert time from milliseconds to seconds
             dt = self.clock.get_time() / 1000
 
@@ -179,6 +182,9 @@ class Game:
                 drive_sound = True
             if(not(pygame.mixer.Channel(0).get_busy())):    #Prevent sound overlap
                 if(drive_sound):
+                    if(prev_terrain is not self.terrain):
+                        car_snow_sound.stop()
+                        car_driving_sound.stop()
                     if(self.terrain is 0):
                         car_driving_sound.play()
                     if(self.terrain is 1):

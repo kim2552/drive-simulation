@@ -11,6 +11,7 @@ joohoon.kim@outlook.com
 import pygame
 from pygame.math import Vector2
 from math import sin, cos, tan, radians, degrees, copysign, pi, sqrt
+from random import randint
 
 """ Vehicle Parameters """
 SCALE = 2             #TODO::Make SCALE a global parameter from main.py
@@ -23,7 +24,7 @@ C_BRAKE = 1000000
 POS_BUFFER_LENGTH = 60
 
 class Car:
-    def __init__(self,x,y,orient=90,max_steer=0,max_speed=5,max_accel=5.0):
+    def __init__(self,x,y,orient=180,max_steer=0,max_speed=5,max_accel=5.0):
         self.pos = Vector2(x,y)
         self.vel = Vector2(0.0,0.0)
         self.accel = Vector2(0.0,0.0)
@@ -34,6 +35,7 @@ class Car:
         self.gear = 1               #0:park, 1:drive, 2:reverse
         self.prev_pos = Vector2(0,0)
         self.pos_buf = Vector2(0,0)
+        self.terrain = 0
         self.drag = C_DRAG_ROAD
         self.RR = 30*self.drag
 
@@ -45,6 +47,9 @@ class Car:
         pos_local  = Vector2(0.0,0.0)
         vel_local = Vector2(0.0,0.0)
         speed=sqrt(self.vel.x*self.vel.x + self.vel.y*self.vel.y)
+
+        if(self.terrain is 1):
+            self.steer_angle += randint(-2,2)
 
         if(self.steer_angle):
             circ_radius = LENGTH / (sin(self.steer_angle))
@@ -132,6 +137,7 @@ class Car:
         return self.orient
 
     def setTerrain(self,terrain):
+        self.terrain = terrain
         if(terrain is 0):
             self.drag = C_DRAG_ROAD
         if(terrain is 1):
