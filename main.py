@@ -46,7 +46,7 @@ SCREEN_HEIGHT = 256*SCALE
 GAME_TICKS = 60
 
 """ Game Parameters """
-NUM_OBSTACLES = 1
+NUM_OBSTACLES = 10
 
 class Game:
     def __init__(self):
@@ -197,7 +197,7 @@ class Game:
                 if(not(drive_sound)):
                     car_snow_sound.stop()
                     car_driving_sound.stop()
-            if(abs(self.car.getAngVel()) > 2.5):
+            if(abs(self.car.getAngVel()) > 3.0):
                 car_skid_sound.play()
             else:
                 car_skid_sound.stop()

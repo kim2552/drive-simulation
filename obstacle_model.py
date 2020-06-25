@@ -45,10 +45,10 @@ class Obstacle:
 #        print("boundaryX2:",car["pos"].x+self.pos_rel_map.x-car["length"])
 #        print("boundaryY:",car["pos"].y+self.getDim().y+self.pos_rel_map.y)
 #        print("boundaryY2:",car["pos"].y+self.pos_rel_map.y-car["length"])
-        if( (x <= car["pos"].x+self.pos_rel_map.x+self.getDim().x) and
-            (x >= car["pos"].x+self.pos_rel_map.x-car["length"]) and
-            (y <= car["pos"].y+self.pos_rel_map.y+self.getDim().y) and
-            (y >= car["pos"].y+self.pos_rel_map.y-car["length"]) ):
+        if( (x <= car["pos"].x+self.pos_rel_map.x+self.getDim().x-20) and
+            (x >= car["pos"].x+self.pos_rel_map.x-car["length"]+20) and
+            (y <= car["pos"].y+self.pos_rel_map.y+self.getDim().y-20) and
+            (y >= car["pos"].y+self.pos_rel_map.y-car["length"]+20) ):
             pos_valid[0] = False
             pos_valid[1] = False
 

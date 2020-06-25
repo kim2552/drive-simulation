@@ -132,6 +132,9 @@ class Car:
     def getPosition(self):
         return self.pos
 
+    def getVel(self):
+        return self.vel
+
     def getPrevPos(self):
         return self.prev_pos
 
