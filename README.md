@@ -1,7 +1,8 @@
 # CarSimPy
-A car simulation using python
 
-A 2D physics based car simulation. Created for the intention of testing vehicle control algorithms. Written in Python. Utilizes PyGame for the GUI.
+A 2D physics based car simulation.
+
+Created for the intention of testing vehicle control algorithms. Written in Python. Utilizes PyGame for the GUI.
 
 ![Alt Text](https://github.com/joohoonkim/CarSimPy/blob/master/assets/carsimpy_gif.gif)
 
