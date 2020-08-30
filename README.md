@@ -2,7 +2,7 @@
 
 A 2D physics based car simulation.
 
-Written in Python. Uses PyGame for GUI.
+Written in Python. Uses PyGame for the GUI.
 
 ![Alt Text](https://github.com/joohoonkim/CarSimPy/blob/master/assets/carsimpy_gif.gif)
 
