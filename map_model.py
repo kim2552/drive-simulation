@@ -11,12 +11,7 @@ import pygame
 from pygame.math import Vector2
 from math import sin, cos, tan, radians, degrees, copysign, pi, sqrt
 
-""" Map Parameters """
-SCALE = 4           #TODO::Make SCALE a global parameter from main.py
-MAP_WIDTH = 254*SCALE
-MAP_HEIGHT = 254*SCALE
-BORDER = 4*SCALE
-
+from constants import *
 
 class Map:
     def __init__(self,x,y):
@@ -64,7 +59,6 @@ class Map:
               (y <= car.getPosition().y+(250*SCALE)) and
               (y >= car.getPosition().y+(4*SCALE)) ):
             terrain = 1
-            print("hi")
         elif( (x <= car.getPosition().x+(250*SCALE)) and  # BOTTOM GRASS AREA
               (x >= car.getPosition().x+(4*SCALE)) and
               (y <= car.getPosition().y+(250*SCALE)) and

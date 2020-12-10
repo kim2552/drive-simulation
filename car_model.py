@@ -13,15 +13,7 @@ from pygame.math import Vector2
 from math import sin, cos, tan, radians, degrees, copysign, pi, sqrt
 from random import randint
 
-""" Vehicle Parameters """
-SCALE = 2             #TODO::Make SCALE a global parameter from main.py
-LENGTH = 22*SCALE     #(0.1m)
-WIDTH  = 11*SCALE     #(0.1m)
-MASS   = 1300/SCALE   #(kg)
-C_DRAG_ROAD = 50     #0.4257
-C_DRAG_GRASS = 200
-C_BRAKE = 1000000
-POS_BUFFER_LENGTH = 60
+from constants import *
 
 class Car:
     def __init__(self,x,y,orient=180,max_steer=0,max_speed=5,max_accel=5.0):
@@ -55,7 +47,7 @@ class Car:
         self.ang_vel = 0
 
         if(self.steer_angle):
-            circ_radius = LENGTH / (sin(self.steer_angle))
+            circ_radius = VEHICLE_LENGTH / (sin(self.steer_angle))
             ang_vel = speed / circ_radius
             self.ang_vel = ang_vel
             print("angular velocity = ", ang_vel)
@@ -124,10 +116,10 @@ class Car:
         self.brake_b = b
 
     def getLength(self):
-        return LENGTH
+        return VEHICLE_LENGTH
 
     def getWidth(self):
-        return WIDTH
+        return VEHICLE_WIDTH
 
     def getPosition(self):
         return self.pos

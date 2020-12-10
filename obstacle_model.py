@@ -11,17 +11,14 @@ import pygame
 from pygame.math import Vector2
 from math import sin, cos, tan, radians, degrees, copysign, pi
 
-""" Obstacle Parameters """
-SCALE = 1
-LENGTH = 60*SCALE
-WIDTH = 40*SCALE
+from constants import *
 
 class Obstacle:
     def __init__(self, x, y, angle=90.0, width = 30, height = 30, max_speed=5, max_accel=0):
         self.position = Vector2(0.0,0.0)
         self.pos_rel_map = Vector2(x, y) # Position relative to map
         self.velocity = Vector2(0.0,0.0)
-        self.dim = Vector2(LENGTH,WIDTH)
+        self.dim = Vector2(OBSTACLE_LENGTH,OBSTACLE_WIDTH)
         self.accel = 0.0
         self.angle = angle
         self.speed = 0.0

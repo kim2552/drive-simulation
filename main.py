@@ -20,6 +20,7 @@ from pygame.math import Vector2
 from pygame.locals import *
 
 # local import
+from constants import *
 import car_model
 import map_model
 import obstacle_model
@@ -34,25 +35,15 @@ rock_image = pygame.image.load(assets_path+"rock.png")
 # Sound Effects TODO::Get better sound effects
 pygame.mixer.init()
 car_crash_sound = pygame.mixer.Sound(assets_path+"sounds/crash.wav")
-#car_driving_sound = pygame.mixer.Sound(assets_path+"sounds/car_driving.wav")
 car_driving_sound = pygame.mixer.Sound(assets_path+"sounds/car_driving_3.wav")
 car_snow_sound = pygame.mixer.Sound(assets_path+"sounds/car_snow.wav")
 car_skid_sound = pygame.mixer.Sound(assets_path+"sounds/tire_skid.wav")
-
-""" Screen Parameters """
-SCALE = 2
-SCREEN_WIDTH = 256*SCALE
-SCREEN_HEIGHT = 256*SCALE
-GAME_TICKS = 60
-
-""" Game Parameters """
-NUM_OBSTACLES = 10
 
 class Game:
     def __init__(self):
         """ initialize screen """
         pygame.init()
-        pygame.display.set_caption("CarSimPy")
+        pygame.display.set_caption("Drive-Simulation")
 
         # Starting Position
         car_pos_x = (SCREEN_WIDTH/2)-100
@@ -129,7 +120,7 @@ class Game:
         self.screen.blit(self.background_image, env.getPos())
 
         # Draw car
-        self.car_image = pygame.transform.scale(car_image,(car.getLength(),car.getWidth()))
+        self.car_image = pygame.transform.scale(car_image,(int(car.getLength()),int(car.getWidth()) ))
         rotated = pygame.transform.rotate(self.car_image, car.getOrientation())
         rect = rotated.get_rect()
         self.screen.blit(rotated, (SCREEN_WIDTH//2,SCREEN_HEIGHT//2))
@@ -176,31 +167,32 @@ class Game:
             self.draw(self.car,self.map,self.obstacles)
 
             # Sound Effects
-            if(not(pos_valid[0]) or not(pos_valid[1])): #Car crashed
-                car_crash_sound.play()
-            drive_sound = False
-            if((abs(car_info["vel"].x) > 50 or abs(car_info["vel"].y) > 50)): #Car speed > 50
-                drive_sound = True
-            if(not(pygame.mixer.Channel(0).get_busy())):    #Prevent sound overlap
-                if(drive_sound):
-                    if(prev_terrain is not self.terrain):
+            if(SOUND_ON):
+                if(not(pos_valid[0]) or not(pos_valid[1])): #Car crashed
+                    car_crash_sound.play()
+                drive_sound = False
+                if((abs(car_info["vel"].x) > 50 or abs(car_info["vel"].y) > 50)): #Car speed > 50
+                    drive_sound = True
+                if(not(pygame.mixer.Channel(0).get_busy())):    #Prevent sound overlap
+                    if(drive_sound):
+                        if(prev_terrain is not self.terrain):
+                            car_snow_sound.stop()
+                            car_driving_sound.stop()
+                        if(self.terrain is 0):
+                            car_driving_sound.play()
+                        if(self.terrain is 1):
+                            car_snow_sound.play()
+                    else:
                         car_snow_sound.stop()
                         car_driving_sound.stop()
-                    if(self.terrain is 0):
-                        car_driving_sound.play()
-                    if(self.terrain is 1):
-                        car_snow_sound.play()
                 else:
-                    car_snow_sound.stop()
-                    car_driving_sound.stop()
-            else:
-                if(not(drive_sound)):
-                    car_snow_sound.stop()
-                    car_driving_sound.stop()
-            if(abs(self.car.getAngVel()) > 3.0):
-                car_skid_sound.play()
-            else:
-                car_skid_sound.stop()
+                    if(not(drive_sound)):
+                        car_snow_sound.stop()
+                        car_driving_sound.stop()
+                if(abs(self.car.getAngVel()) > 3.0):
+                    car_skid_sound.play()
+                else:
+                    car_skid_sound.stop()
 
             # Update the clock (Called once per frame)
             self.clock.tick(self.ticks)
