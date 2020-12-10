@@ -7,7 +7,7 @@ SCREEN_HEIGHT = 128*SCALE
 GAME_TICKS = 60
 
 """ Game Parameters """
-NUM_OBSTACLES = 10
+NUM_OBSTACLES = 0
 
 """ Map Parameters """
 MAP_WIDTH = 254*SCALE

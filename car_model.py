@@ -14,6 +14,7 @@ from math import sin, cos, tan, radians, degrees, copysign, pi, sqrt
 from random import randint
 
 from constants import *
+import sensor
 
 class Car:
     def __init__(self,x,y,orient=180,max_steer=0,max_speed=5,max_accel=5.0):
@@ -32,6 +33,9 @@ class Car:
         self.RR = 30*self.drag
         self.ang_vel = 0
 
+        # Sensors
+        self.front_sensor = sensor.Sensor(x,y)
+
         # Threshold Constants
         self.max_steer = max_steer
         self.max_speed = max_speed
@@ -41,7 +45,7 @@ class Car:
         vel_local = Vector2(0.0,0.0)
         speed=sqrt(self.vel.x*self.vel.x + self.vel.y*self.vel.y)
 
-        if(self.terrain is 1):
+        if(self.terrain == 1):
             self.steer_angle += randint(-2,2)
 
         self.ang_vel = 0
@@ -50,7 +54,7 @@ class Car:
             circ_radius = VEHICLE_LENGTH / (sin(self.steer_angle))
             ang_vel = speed / circ_radius
             self.ang_vel = ang_vel
-            print("angular velocity = ", ang_vel)
+            # print("angular velocity = ", ang_vel)
             self.orient = (self.orient + ang_vel)%360
 
         heading = Vector2(cos(self.orient*pi/180.0),sin(-self.orient*pi/180.0))
@@ -59,13 +63,13 @@ class Car:
 
         if( ((self.vel.x>=0 and heading.x>=0)or(self.vel.x<=0 and heading.x<=0)) and\
             ((self.vel.y>=0 and heading.y>=0)or(self.vel.y<=0 and heading.y<=0)) and\
-             self.brake_b and (self.gear is 1) ):
+             self.brake_b and (self.gear == 1) ):
             F_tract = -heading*C_BRAKE
         if( ((self.vel.x<=0 and heading.x>=0)or(self.vel.x>=0 and heading.x<=0)) and\
             ((self.vel.y<=0 and heading.y>=0)or(self.vel.y>=0 and heading.y<=0)) and\
-             self.brake_b and (self.gear is 2) ):
+             self.brake_b and (self.gear == 2) ):
             F_tract = heading*C_BRAKE
-        print("C_DRAG = ",self.drag)
+        # print("C_DRAG = ",self.drag)
         F_drag = -self.drag*self.vel
         self.RR = 30*self.drag
         F_rr = -self.RR*self.vel                   #Rolling Resistance C_rr ~= 30*C_drag
@@ -99,8 +103,8 @@ class Car:
         else:
             self.vel.y = 0
 
-        print("Car position=",self.pos)
-#        print("Car velocity=",self.vel)
+        # print("Car position=",self.pos)
+        # print("Car velocity=",self.vel)
 
 
     def setGear(self,gear):
@@ -141,8 +145,8 @@ class Car:
 
     def setTerrain(self,terrain):
         self.terrain = terrain
-        if(terrain is 0):
+        if(terrain == 0):
             self.drag = C_DRAG_ROAD
-        if(terrain is 1):
+        if(terrain == 1):
             self.drag = C_DRAG_GRASS
-        print("terrain = ",terrain," and C_DRAG=",self.drag)
+        # print("terrain = ",terrain," and C_DRAG=",self.drag)

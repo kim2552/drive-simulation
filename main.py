@@ -86,7 +86,7 @@ class Game:
         x = SCREEN_WIDTH//2
         y = SCREEN_HEIGHT//2
 
-        self.terrain = env.CheckTerrain(self.terrain,x,y,car)
+        self.terrain = env.CheckTerrain(x,y,car.getPosition())
         return self.terrain
 
     """ defines the controls of the car """
@@ -152,6 +152,10 @@ class Game:
             pressed = pygame.key.get_pressed()
             self.controls(self.car, dt, pressed)
 
+            # Sensors
+            self.car.front_sensor.update(self.car.getPosition(),self.car.getOrientation())
+            detected = self.car.front_sensor.check_sensor(self.map,(self.car.getLength()*2))
+
             # Logic
             self.terrain = self.CheckTerrain(self.car,self.map)
             self.car.setTerrain(self.terrain)
@@ -178,9 +182,9 @@ class Game:
                         if(prev_terrain is not self.terrain):
                             car_snow_sound.stop()
                             car_driving_sound.stop()
-                        if(self.terrain is 0):
+                        if(self.terrain == 0):
                             car_driving_sound.play()
-                        if(self.terrain is 1):
+                        if(self.terrain == 1):
                             car_snow_sound.play()
                     else:
                         car_snow_sound.stop()

@@ -22,7 +22,7 @@ class Map:
     def update(self,dt,pos):
         self.pos.x = pos.x
         self.pos.y = pos.y
-        print("Map position:",self.pos)
+        # print("Map position:",self.pos)
 
     def CheckBoundary(self,pos_valid,x,y,car):
         if(x >= car["pos"].x+self.getDim().x-car["length"]-self.getBorder()):
@@ -38,41 +38,42 @@ class Map:
 
         return pos_valid
 
-    def CheckTerrain(self,terrain,x,y,car):
-        print("x=",x," y=",y)
-        print(car.getPosition().x+(192*SCALE))
-        print(car.getPosition().x+(61*SCALE))
-        print(car.getPosition().x+(191*SCALE))
-        print(car.getPosition().x+(55*SCALE))
-        if( (x <= car.getPosition().x+(192*SCALE)) and  # MIDDLE GRASS AREA
-            (x >= car.getPosition().x+(61*SCALE)) and
-            (y <= car.getPosition().y+(191*SCALE)) and
-            (y >= car.getPosition().y+(55*SCALE)) ):
+    def CheckTerrain(self,x,y,position):
+        terrain=0
+        # print("x=",x," y=",y)
+        # print(position.x+(192*SCALE))
+        # print(position.x+(61*SCALE))
+        # print(position.x+(191*SCALE))
+        # print(position.x+(55*SCALE))
+        if( (x <= position.x+(192*SCALE)) and  # MIDDLE GRASS AREA
+            (x >= position.x+(61*SCALE)) and
+            (y <= position.y+(191*SCALE)) and
+            (y >= position.y+(55*SCALE)) ):
             terrain = 1
-        elif( (x <= car.getPosition().x+(250*SCALE)) and  # TOP GRASS AREA
-              (x >= car.getPosition().x+(4*SCALE)) and
-              (y <= car.getPosition().y+(17*SCALE)) and
-              (y >= car.getPosition().y+(4*SCALE)) ):
+        elif( (x <= position.x+(250*SCALE)) and  # TOP GRASS AREA
+              (x >= position.x+(4*SCALE)) and
+              (y <= position.y+(17*SCALE)) and
+              (y >= position.y+(4*SCALE)) ):
             terrain = 1
-        elif( (x <= car.getPosition().x+(250*SCALE)) and  # RIGHT GRASS AREA
-              (x >= car.getPosition().x+(231*SCALE)) and
-              (y <= car.getPosition().y+(250*SCALE)) and
-              (y >= car.getPosition().y+(4*SCALE)) ):
+        elif( (x <= position.x+(250*SCALE)) and  # RIGHT GRASS AREA
+              (x >= position.x+(231*SCALE)) and
+              (y <= position.y+(250*SCALE)) and
+              (y >= position.y+(4*SCALE)) ):
             terrain = 1
-        elif( (x <= car.getPosition().x+(250*SCALE)) and  # BOTTOM GRASS AREA
-              (x >= car.getPosition().x+(4*SCALE)) and
-              (y <= car.getPosition().y+(250*SCALE)) and
-              (y >= car.getPosition().y+(235*SCALE)) ):
+        elif( (x <= position.x+(250*SCALE)) and  # BOTTOM GRASS AREA
+              (x >= position.x+(4*SCALE)) and
+              (y <= position.y+(250*SCALE)) and
+              (y >= position.y+(235*SCALE)) ):
             terrain = 1
-        elif( (x <= car.getPosition().x+(20*SCALE)) and  # LEFT GRASS AREA
-              (x >= car.getPosition().x+(4*SCALE)) and
-              (y <= car.getPosition().y+(235*SCALE)) and
-              (y >= car.getPosition().y+(4*SCALE)) ):
+        elif( (x <= position.x+(20*SCALE)) and  # LEFT GRASS AREA
+              (x >= position.x+(4*SCALE)) and
+              (y <= position.y+(235*SCALE)) and
+              (y >= position.y+(4*SCALE)) ):
             terrain = 1
         else:
             terrain = 0
 
-        print("terrain=",terrain)
+        # print("terrain=",terrain)
         return terrain
 
 
