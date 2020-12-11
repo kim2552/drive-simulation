@@ -31,6 +31,7 @@ assets_path = os.path.join(current_dir, "assets/")
 car_image = pygame.image.load(assets_path+"car.png")
 background_image = pygame.image.load(assets_path+"background.png")
 rock_image = pygame.image.load(assets_path+"rock.png")
+sensor_image = pygame.image.load(assets_path+"sensor_beam.png")
 
 # Sound Effects TODO::Get better sound effects
 pygame.mixer.init()
@@ -55,8 +56,6 @@ class Game:
         self.clock = pygame.time.Clock()
         self.ticks = GAME_TICKS
         self.exit = False
-        self.car_image = None
-        self.background_image = None
         self.terrain = 0    #0=road, 1=grass
 
         self.car = car_model.Car(car_pos_x, car_pos_y)
@@ -116,19 +115,25 @@ class Game:
         # Draw background
         map_width=(int)(env.getDim().x)
         map_height=(int)(env.getDim().y)
-        self.background_image = pygame.transform.scale(background_image,(map_width,map_height))
-        self.screen.blit(self.background_image, env.getPos())
+        background_scaled = pygame.transform.scale(background_image,(map_width,map_height))
+        self.screen.blit(background_scaled, env.getPos())
 
         # Draw car
-        self.car_image = pygame.transform.scale(car_image,(int(car.getLength()),int(car.getWidth()) ))
-        rotated = pygame.transform.rotate(self.car_image, car.getOrientation())
-        rect = rotated.get_rect()
-        self.screen.blit(rotated, (SCREEN_WIDTH//2,SCREEN_HEIGHT//2))
+        car_scaled = pygame.transform.scale(car_image,(int(car.getLength()),int(car.getWidth()) ))
+        car_rotated = pygame.transform.rotate(car_scaled, car.getOrientation())
+        self.screen.blit(car_rotated, (SCREEN_WIDTH//2,SCREEN_HEIGHT//2))
 
         # Draw obstacle(s)
         for ob in obstacles:
-            self.rock_image = pygame.transform.scale(rock_image,(int(ob.getDim().x),int(ob.getDim().y)))
-            self.screen.blit(self.rock_image, ob.getPosition())
+            rock_scaled = pygame.transform.scale(rock_image,(int(ob.getDim().x),int(ob.getDim().y)))
+            self.screen.blit(rock_scaled, ob.getPosition())
+
+        # Draw sensor(s)
+        fs_obj = car.front_sensor
+        fs_scaled = pygame.transform.scale(sensor_image,(int(fs_obj.get_length()),int(fs_obj.get_width())))
+        fs_rotated = pygame.transform.rotate(fs_scaled, car.getOrientation())
+        front_sensor_position = Vector2( (SCREEN_WIDTH//2)+car.getLength(), (SCREEN_HEIGHT//2)+(car.getWidth()//2) )
+        self.screen.blit(fs_rotated, front_sensor_position)
 
         pygame.display.flip()
 
@@ -154,7 +159,8 @@ class Game:
 
             # Sensors
             self.car.front_sensor.update(self.car.getPosition(),self.car.getOrientation())
-            detected = self.car.front_sensor.check_sensor(self.map,(self.car.getLength()*2))
+            detected = self.car.front_sensor.check_sensor(self.map,100,1)
+            print(detected)
 
             # Logic
             self.terrain = self.CheckTerrain(self.car,self.map)
