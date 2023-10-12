@@ -5,3 +5,4 @@
 env_*/
 *.code-workspace
 .vscode
+.idea
