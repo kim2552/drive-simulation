@@ -90,7 +90,7 @@ class Car:
             "pos": pos_local, "vel": vel_local,
             "length": length, "width": width
         }
-        #        print("car_model.info: ", info)
+        # print("car_model.info: ", info)
 
         return info
 
