@@ -13,12 +13,13 @@ from random import randint
 
 from pygame.math import Vector2
 
-import sensor
-from constants import *
+from modules import sensor
+from modules.constants import *
 
 
 class Car:
     def __init__(self, x, y, orient=180, max_steer=0, max_speed=5, max_accel=5.0):
+        self.max_accel = max_accel
         self.pos = Vector2(x, y)
         self.vel = Vector2(0.0, 0.0)
         self.accel = Vector2(0.0, 0.0)

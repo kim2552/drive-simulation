@@ -9,7 +9,7 @@ joohoon.kim@outlook.com
 """
 from pygame.math import Vector2
 
-from constants import *
+from modules.constants import *
 
 
 class Map:
